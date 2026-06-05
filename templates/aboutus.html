@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+{% block title %}About Us — Folio{% endblock %}
+
+{% block extra_style %}
+<style>
+    .about-hero {
+        background: var(--ink);
+        padding: 7rem 3rem 5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .about-hero::before {
+        content: 'FOLIO';
+        position: absolute;
+        font-family: var(--ff-display);
+        font-size: 18rem;
+        font-weight: 900;
+        color: rgba(255,255,255,0.02);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        white-space: nowrap;
+        pointer-events: none;
+        letter-spacing: -0.05em;
+    }
+
+    .about-hero-inner {
+        max-width: 700px;
+        margin: 0 auto;
+        text-align: center;
+        position: relative;
+    }
+
+    .about-hero-eyebrow {
+        font-family: var(--ff-mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 1.5rem;
+    }
+
+    .about-hero h1 {
+        font-family: var(--ff-display);
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 900;
+        color: var(--parchment);
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .about-hero p {
+        font-style: italic;
+        color: #8a7a6a;
+        font-size: 1.1rem;
+        line-height: 1.9;
+    }
+
+    /* Story section */
+    .story-section {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 7rem 3rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6rem;
+        align-items: center;
+    }
+
+    .story-text {}
+
+    .section-eyebrow {
+        font-family: var(--ff-mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--gold);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-eyebrow::before {
+        content: '';
+        width: 25px;
+        height: 1px;
+        background: var(--gold);
+    }
+
+    .story-text h2 {
+        font-family: var(--ff-display);
+        font-size: 2.2rem;
+        font-weight: 900;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .story-text p {
+        font-style: italic;
+        color: var(--muted);
+        line-height: 1.9;
+        margin-bottom: 1.2rem;
+        font-size: 0.95rem;
+    }
+
+    .story-visual {
+        position: relative;
+    }
+
+    .story-stat-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5px;
+        background: var(--border);
+        border: 1.5px solid var(--border);
+    }
+
+    .story-stat {
+        background: var(--cream);
+        padding: 2.5rem 2rem;
+        text-align: center;
+    }
+
+    .stat-num {
+        font-family: var(--ff-display);
+        font-size: 3rem;
+        font-weight: 900;
+        color: var(--ink);
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-num span {
+        color: var(--gold);
+        font-style: italic;
+    }
+
+    .stat-label {
+        font-family: var(--ff-mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--muted);
+    }
+
+    /* Values */
+    .values-section {
+        background: var(--parchment);
+        padding: 6rem 3rem;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .values-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .values-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+
+    .values-header h2 {
+        font-family: var(--ff-display);
+        font-size: 2rem;
+        font-weight: 900;
+        margin-top: 1rem;
+    }
+
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+
+    .value-card {
+        padding: 2.5rem;
+        background: white;
+        border: 1px solid var(--border);
+        border-top: 3px solid var(--gold);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .value-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    .value-icon {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .value-card h3 {
+        font-family: var(--ff-display);
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+    }
+
+    .value-card p {
+        font-size: 0.88rem;
+        color: var(--muted);
+        line-height: 1.8;
+        font-style: italic;
+    }
+
+    /* Team CTA */
+    .cta-section {
+        text-align: center;
+        padding: 7rem 3rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .cta-section h2 {
+        font-family: var(--ff-display);
+        font-size: 2.2rem;
+        font-style: italic;
+        margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+        color: var(--muted);
+        font-style: italic;
+        margin-bottom: 2rem;
+        line-height: 1.8;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="about-hero">
+    <div class="about-hero-inner">
+        <p class="about-hero-eyebrow">Est. 2024 — Our Story</p>
+        <h1>We Believe in the Power of a Good Book.</h1>
+        <p>Folio was built by readers, for readers. A place where literature finds its home and stories find their people.</p>
+    </div>
+</div>
+
+<!-- Story -->
+<div class="story-section">
+    <div class="story-text">
+        <p class="section-eyebrow">Our Mission</p>
+        <h2>Connecting Books with the Right Readers</h2>
+        <p>Folio started as a simple idea: that every good book deserves to be found. We set out to create a curated, thoughtful space where literature isn't just sold — it's celebrated.</p>
+        <p>Every title in our catalogue has been hand-selected. We don't stock everything; we stock what matters. Quality over quantity, always.</p>
+        <p>We also believe in giving authors a voice. Through our publishing platform, writers can share their work with a community that genuinely cares.</p>
+        <br>
+        <a href="/books" class="btn btn-primary">Browse the Catalogue</a>
+    </div>
+    <div class="story-visual">
+        <div class="story-stat-grid">
+            <div class="story-stat">
+                <div class="stat-num">6<span>+</span></div>
+                <div class="stat-label">Curated Titles</div>
+            </div>
+            <div class="story-stat">
+                <div class="stat-num"><span>∞</span></div>
+                <div class="stat-label">Stories Waiting</div>
+            </div>
+            <div class="story-stat">
+                <div class="stat-num">1<span>k</span></div>
+                <div class="stat-label">Happy Readers</div>
+            </div>
+            <div class="story-stat">
+                <div class="stat-num">24<span>h</span></div>
+                <div class="stat-label">Dispatch Time</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Values -->
+<div class="values-section">
+    <div class="values-inner">
+        <div class="values-header">
+            <p class="section-eyebrow" style="justify-content:center">What Guides Us</p>
+            <h2>Our Values</h2>
+        </div>
+        <div class="values-grid">
+            <div class="value-card">
+                <span class="value-icon">📖</span>
+                <h3>Curation First</h3>
+                <p>We curate, not aggregate. Every book on our shelves earned its place through genuine quality and lasting value.</p>
+            </div>
+            <div class="value-card">
+                <span class="value-icon">✍️</span>
+                <h3>Author Empowerment</h3>
+                <p>We open our platform to authors who want to share their voice. Publishing should be accessible to everyone with a story to tell.</p>
+            </div>
+            <div class="value-card">
+                <span class="value-icon">🤝</span>
+                <h3>Community</h3>
+                <p>Books are better when shared. We build spaces where readers connect, discuss, and discover together.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+    <p class="section-eyebrow" style="justify-content:center">Join Folio</p>
+    <h2>Ready to Start Reading?</h2>
+    <p>Browse our collection, or join the community and share your own story with the world.</p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <a href="/register" class="btn btn-gold">Create Account</a>
+        <a href="/contact" class="btn btn-outline">Get in Touch</a>
+    </div>
+</div>
+
+{% endblock %}

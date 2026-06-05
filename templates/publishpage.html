@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% block title %}Publish — Folio{% endblock %}
+
+{% block extra_style %}
+<style>
+    .publish-layout {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 5rem 3rem;
+    }
+
+    .publish-eyebrow {
+        font-family: var(--ff-mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--gold);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .publish-eyebrow::before {
+        content: '';
+        width: 30px;
+        height: 1px;
+        background: var(--gold);
+    }
+
+    .publish-layout h1 {
+        font-family: var(--ff-display);
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.5rem;
+        color: var(--ink);
+    }
+
+    .publish-layout .subtitle {
+        font-style: italic;
+        color: var(--muted);
+        margin-bottom: 3rem;
+        font-size: 1rem;
+    }
+
+    .publish-form {
+        background: white;
+        border: 1px solid var(--border);
+        padding: 3rem;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .upload-area {
+        border: 2px dashed var(--border);
+        padding: 2.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color 0.2s, background 0.2s;
+        position: relative;
+        background: var(--cream);
+    }
+
+    .upload-area:hover {
+        border-color: var(--gold);
+        background: var(--parchment);
+    }
+
+    .upload-area input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+    }
+
+    .upload-icon {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+        display: block;
+        color: var(--border);
+    }
+
+    .upload-text {
+        font-family: var(--ff-mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+    }
+
+    .upload-sub {
+        font-size: 0.8rem;
+        color: var(--border);
+        margin-top: 0.3rem;
+        font-style: italic;
+    }
+
+    .form-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 2rem 0;
+    }
+
+    .submit-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 2.5rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .submit-note {
+        font-family: var(--ff-mono);
+        font-size: 0.7rem;
+        color: var(--muted);
+        letter-spacing: 0.05em;
+    }
+
+    .form-group input[type="submit"],
+    .form-group button[type="submit"] {
+        background: var(--ink);
+        color: var(--parchment);
+        font-family: var(--ff-mono);
+        font-size: 0.78rem;
+        font-weight: 400;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        padding: 0.9rem 2.5rem;
+        border: none;
+        cursor: pointer;
+        transition: background 0.2s;
+        border-radius: 1px;
+        width: auto;
+    }
+
+    .form-group input[type="submit"]:hover,
+    .form-group button[type="submit"]:hover { background: var(--rust); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>{% if request.endpoint == 'edit_book' %}Edit Book{% else %}Publish Your Book{% endif %}</h1>
+    <p>Share literature with the world.</p>
+</div>
+
+<div class="publish-layout">
+
+    <div class="publish-form">
+        <form method="POST" enctype="multipart/form-data" novalidate>
+            {{ form.hidden_tag() }}
+
+            <!-- Cover Image -->
+            <div class="form-group">
+                {{ form.image.label }}
+                <div class="upload-area">
+                    {{ form.image(style="") }}
+                    <span class="upload-icon">📚</span>
+                    <p class="upload-text">Click to upload cover image</p>
+                    <p class="upload-sub">PNG, JPG, WEBP recommended</p>
+                </div>
+                {% if form.image.errors %}
+                    {% for error in form.image.errors %}
+                        <p class="form-errors">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="form-divider"></div>
+
+            <!-- Title & Author -->
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.title.label }}
+                    {{ form.title(placeholder="e.g. The Great Gatsby") }}
+                    {% if form.title.errors %}
+                        {% for error in form.title.errors %}
+                            <p class="form-errors">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.author.label }}
+                    {{ form.author(placeholder="e.g. F. Scott Fitzgerald") }}
+                    {% if form.author.errors %}
+                        {% for error in form.author.errors %}
+                            <p class="form-errors">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Price -->
+            <div class="form-group" style="max-width:200px">
+                {{ form.price.label }}
+                {{ form.price(placeholder="e.g. 25") }}
+                {% if form.price.errors %}
+                    {% for error in form.price.errors %}
+                        <p class="form-errors">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                {{ form.description.label }}
+                {{ form.description(placeholder="Write a compelling description of your book...", rows=5) }}
+                {% if form.description.errors %}
+                    {% for error in form.description.errors %}
+                        <p class="form-errors">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="submit-row">
+                <span class="submit-note">All fields are required.</span>
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

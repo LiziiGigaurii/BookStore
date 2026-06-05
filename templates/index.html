@@ -1,0 +1,472 @@
+{% extends "base.html" %}
+{% block title %}Folio — Fine Books & Literature{% endblock %}
+
+{% block extra_style %}
+<style>
+    .hero {
+        background: var(--ink);
+        min-height: 88vh;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(184,134,11,0.04) 80px, rgba(184,134,11,0.04) 81px),
+            repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(184,134,11,0.04) 80px, rgba(184,134,11,0.04) 81px);
+        pointer-events: none;
+    }
+
+    .hero-text {
+        padding: 6rem 4rem 6rem 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-label {
+        font-family: var(--ff-mono);
+        font-size: 0.72rem;
+        font-weight: 300;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .hero-label::before {
+        content: '';
+        display: block;
+        width: 40px;
+        height: 1px;
+        background: var(--gold);
+    }
+
+    .hero h1 {
+        font-family: var(--ff-display);
+        font-size: clamp(3.5rem, 6vw, 5.5rem);
+        font-weight: 900;
+        color: var(--parchment);
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero h1 em {
+        font-style: italic;
+        color: var(--gold-light);
+    }
+
+    .hero-desc {
+        font-size: 1.05rem;
+        color: #a09080;
+        line-height: 1.8;
+        max-width: 420px;
+        margin-bottom: 2.5rem;
+        font-style: italic;
+    }
+
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .hero-visual {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 3rem 4rem 0;
+        z-index: 1;
+    }
+
+    .books-float {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        transform: perspective(800px) rotateY(-8deg) rotateX(4deg);
+        transition: transform 0.5s ease;
+    }
+
+    .books-float:hover { transform: perspective(800px) rotateY(-2deg) rotateX(1deg); }
+
+    .book-card-mini {
+        background: var(--parchment);
+        border-radius: 2px;
+        overflow: hidden;
+        aspect-ratio: 3/4;
+        position: relative;
+        box-shadow: -8px 8px 30px rgba(0,0,0,0.5), inset -3px 0 6px rgba(0,0,0,0.1);
+        animation: float 4s ease-in-out infinite;
+    }
+
+    .book-card-mini:nth-child(2) { animation-delay: 0.5s; margin-top: 2rem; }
+    .book-card-mini:nth-child(3) { animation-delay: 1s; }
+    .book-card-mini:nth-child(4) { animation-delay: 1.5s; margin-top: 2rem; }
+
+    .book-card-mini img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .book-card-mini-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        background: linear-gradient(160deg, var(--parchment) 0%, var(--border) 100%);
+    }
+
+    .book-spine {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 12px;
+        background: var(--gold);
+        opacity: 0.6;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+
+    /* ── MARQUEE ── */
+    .marquee-strip {
+        background: var(--gold);
+        padding: 0.6rem 0;
+        overflow: hidden;
+        white-space: nowrap;
+        border-top: 1px solid var(--gold-light);
+        border-bottom: 1px solid #8a6008;
+    }
+
+    .marquee-inner {
+        display: inline-block;
+        animation: marquee 20s linear infinite;
+        font-family: var(--ff-mono);
+        font-size: 0.72rem;
+        font-weight: 300;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--ink);
+    }
+
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── FEATURES ── */
+    .features {
+        padding: 6rem 3rem;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 3rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .feature {
+        border-top: 2px solid var(--border);
+        padding-top: 2rem;
+        opacity: 0;
+        animation: fadeUp 0.6s ease forwards;
+    }
+
+    .feature:nth-child(1) { animation-delay: 0.1s; }
+    .feature:nth-child(2) { animation-delay: 0.25s; }
+    .feature:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .feature-num {
+        font-family: var(--ff-display);
+        font-size: 3rem;
+        font-weight: 900;
+        color: var(--border);
+        line-height: 1;
+        margin-bottom: 1rem;
+    }
+
+    .feature h3 {
+        font-family: var(--ff-display);
+        font-size: 1.3rem;
+        margin-bottom: 0.75rem;
+        color: var(--ink);
+    }
+
+    .feature p {
+        font-size: 0.9rem;
+        color: var(--muted);
+        line-height: 1.8;
+        font-style: italic;
+    }
+
+    /* ── FEATURED ── */
+    .section-label {
+        font-family: var(--ff-mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--gold);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-label::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+    }
+
+    .featured-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 3rem 6rem;
+    }
+
+    .featured-book {
+        display: flex;
+        flex-direction: column;
+        text-decoration: none;
+        color: inherit;
+        group: true;
+    }
+
+    .featured-img {
+        aspect-ratio: 3/4;
+        background: var(--parchment);
+        overflow: hidden;
+        border: 1px solid var(--border);
+        position: relative;
+        margin-bottom: 1.25rem;
+    }
+
+    .featured-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+
+    .featured-book:hover .featured-img img { transform: scale(1.04); }
+
+    .featured-img-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(160deg, var(--parchment) 0%, #e0d8c8 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--ff-display);
+        font-style: italic;
+        font-size: 0.9rem;
+        color: var(--muted);
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .featured-book-author {
+        font-family: var(--ff-mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 0.3rem;
+    }
+
+    .featured-book-title {
+        font-family: var(--ff-display);
+        font-size: 1.15rem;
+        font-weight: 700;
+        line-height: 1.3;
+        margin-bottom: 0.5rem;
+        transition: color 0.2s;
+    }
+
+    .featured-book:hover .featured-book-title { color: var(--rust); }
+
+    .featured-book-price {
+        font-family: var(--ff-mono);
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-top: auto;
+    }
+
+    .featured-section {
+        padding: 5rem 3rem 0;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* ── CTA ── */
+    .cta-band {
+        background: var(--ink);
+        padding: 6rem 3rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        margin: 4rem 0 0;
+    }
+
+    .cta-band::before {
+        content: '"';
+        position: absolute;
+        font-family: var(--ff-display);
+        font-size: 30rem;
+        color: rgba(184,134,11,0.04);
+        top: -5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        line-height: 1;
+        pointer-events: none;
+    }
+
+    .cta-band h2 {
+        font-family: var(--ff-display);
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-style: italic;
+        color: var(--parchment);
+        margin-bottom: 1rem;
+        position: relative;
+    }
+
+    .cta-band p {
+        color: var(--muted);
+        font-style: italic;
+        margin-bottom: 2rem;
+        font-size: 1.05rem;
+        position: relative;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-text">
+        <p class="hero-label">Est. 2024 — Curated Literature</p>
+        <h1>Every Great<br>Story Finds<br>Its <em>Reader.</em></h1>
+        <p class="hero-desc">A carefully curated collection of contemporary and classic literature, hand-selected for the curious mind.</p>
+        <div class="hero-actions">
+            <a href="/books" class="btn btn-gold">Browse Catalogue</a>
+            <a href="/about_us" class="btn" style="border:1.5px solid #555; color:var(--parchment);">Our Story</a>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="books-float">
+            <div class="book-card-mini">
+                <div class="book-spine"></div>
+                <div class="book-card-mini-placeholder">
+                    <span style="font-family:var(--ff-display);font-style:italic;font-size:0.85rem;color:var(--rust);text-align:center;">It Ends<br>With Us</span>
+                </div>
+            </div>
+            <div class="book-card-mini">
+                <div class="book-spine" style="background:var(--sage)"></div>
+                <div class="book-card-mini-placeholder" style="background:linear-gradient(160deg,#e8ede8,#c8d4c8)">
+                    <span style="font-family:var(--ff-display);font-style:italic;font-size:0.85rem;color:var(--sage);text-align:center;">The Five-Star</span>
+                </div>
+            </div>
+            <div class="book-card-mini">
+                <div class="book-spine" style="background:var(--rust)"></div>
+                <div class="book-card-mini-placeholder" style="background:linear-gradient(160deg,#ede8e3,#d8cec4)">
+                    <span style="font-family:var(--ff-display);font-style:italic;font-size:0.85rem;color:var(--ink);text-align:center;">You With<br>A View</span>
+                </div>
+            </div>
+            <div class="book-card-mini">
+                <div class="book-spine" style="background:#6a5a8a"></div>
+                <div class="book-card-mini-placeholder" style="background:linear-gradient(160deg,#eae8f0,#d4d0e4)">
+                    <span style="font-family:var(--ff-display);font-style:italic;font-size:0.85rem;color:#4a3a6a;text-align:center;">Ghosted</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+    <span class="marquee-inner">
+        New Arrivals &nbsp;·&nbsp; Romance &nbsp;·&nbsp; Literary Fiction &nbsp;·&nbsp; Bestsellers &nbsp;·&nbsp; Staff Picks &nbsp;·&nbsp; Signed Copies &nbsp;·&nbsp; New Arrivals &nbsp;·&nbsp; Romance &nbsp;·&nbsp; Literary Fiction &nbsp;·&nbsp; Bestsellers &nbsp;·&nbsp; Staff Picks &nbsp;·&nbsp; Signed Copies &nbsp;·&nbsp; New Arrivals &nbsp;·&nbsp; Romance &nbsp;·&nbsp; Literary Fiction &nbsp;·&nbsp; Bestsellers &nbsp;·&nbsp; Staff Picks &nbsp;·&nbsp; Signed Copies &nbsp;·&nbsp;
+    </span>
+</div>
+
+<!-- FEATURES -->
+<div class="features">
+    <div class="feature">
+        <div class="feature-num">01</div>
+        <h3>Curated Selection</h3>
+        <p>Every title in our catalogue has been personally reviewed. We stock only books worth reading twice.</p>
+    </div>
+    <div class="feature">
+        <div class="feature-num">02</div>
+        <h3>Publish Your Work</h3>
+        <p>Are you an author? Share your story with our community. Register and submit your manuscript today.</p>
+    </div>
+    <div class="feature">
+        <div class="feature-num">03</div>
+        <h3>Fast Delivery</h3>
+        <p>Orders dispatched within 24 hours. Because a good book should never be kept waiting.</p>
+    </div>
+</div>
+
+<!-- FEATURED BOOKS -->
+<div class="featured-section">
+    <p class="section-label">From the Catalogue</p>
+    <h2 style="font-family:var(--ff-display);font-size:2.5rem;margin-bottom:3rem;">Featured Titles</h2>
+</div>
+
+<div class="featured-grid">
+    <a href="/books" class="featured-book">
+        <div class="featured-img">
+            <div class="featured-img-placeholder">It Ends With Us</div>
+        </div>
+        <p class="featured-book-author">Colleen Hoover</p>
+        <h3 class="featured-book-title">It Ends With Us</h3>
+        <p class="featured-book-price">$25.00</p>
+    </a>
+    <a href="/books" class="featured-book">
+        <div class="featured-img">
+            <div class="featured-img-placeholder" style="background:linear-gradient(160deg,#e8ede8,#c8d4c8)">The Five-Star Weekend</div>
+        </div>
+        <p class="featured-book-author">Elin Hilderbrand</p>
+        <h3 class="featured-book-title">The Five-Star Weekend</h3>
+        <p class="featured-book-price">$30.00</p>
+    </a>
+    <a href="/books" class="featured-book">
+        <div class="featured-img">
+            <div class="featured-img-placeholder" style="background:linear-gradient(160deg,#eaeaf0,#d4d0e4)">The Hating Game</div>
+        </div>
+        <p class="featured-book-author">Sally Thorm</p>
+        <h3 class="featured-book-title">The Hating Game</h3>
+        <p class="featured-book-price">$30.00</p>
+    </a>
+</div>
+
+<!-- CTA -->
+<div class="cta-band">
+    <h2>"A reader lives a thousand lives before he dies."</h2>
+    <p>— George R.R. Martin</p>
+    <a href="/books" class="btn btn-gold">Explore All Books</a>
+</div>
+
+{% endblock %}

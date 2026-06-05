@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+{% block title %}{{ book.title }} — Folio{% endblock %}
+
+{% block extra_style %}
+<style>
+    .book-detail {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 5rem 3rem;
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        gap: 5rem;
+        align-items: start;
+    }
+
+    .book-cover-wrap {
+        position: sticky;
+        top: 90px;
+    }
+
+    .book-cover-large {
+        aspect-ratio: 3/4;
+        background: var(--parchment);
+        border: 1px solid var(--border);
+        overflow: hidden;
+        position: relative;
+        box-shadow: -12px 12px 40px rgba(0,0,0,0.12), 4px 4px 0 var(--gold);
+        margin-bottom: 1.5rem;
+    }
+
+    .book-cover-large img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .book-cover-large-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(155deg, var(--parchment) 0%, #e0d8c8 100%);
+        font-family: var(--ff-display);
+        font-style: italic;
+        font-size: 1.1rem;
+        color: var(--muted);
+        padding: 2.5rem;
+        text-align: center;
+    }
+
+    .cover-spine {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 14px;
+        background: var(--gold);
+        opacity: 0.4;
+    }
+
+    /* Book info */
+    .book-info { animation: fadeIn 0.5s ease; }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateX(15px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    .breadcrumb {
+        font-family: var(--ff-mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .breadcrumb a {
+        color: var(--gold);
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .breadcrumb a:hover { color: var(--rust); }
+
+    .book-author-tag {
+        font-family: var(--ff-mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .book-author-tag::before {
+        content: '';
+        width: 30px;
+        height: 1px;
+        background: var(--gold);
+    }
+
+    .book-title {
+        font-family: var(--ff-display);
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 900;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+        margin-bottom: 2rem;
+    }
+
+    .book-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 2rem 0;
+        position: relative;
+    }
+
+    .book-divider::before {
+        content: '◆';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        background: var(--cream);
+        padding: 0 0.75rem;
+        color: var(--gold);
+        font-size: 0.6rem;
+    }
+
+    .book-description {
+        font-family: var(--ff-body);
+        font-size: 1rem;
+        line-height: 1.9;
+        color: #3a3025;
+        font-style: italic;
+        margin-bottom: 2.5rem;
+    }
+
+    .book-specs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+        padding: 1.5rem;
+        background: var(--parchment);
+        border: 1px solid var(--border);
+    }
+
+    .book-spec-item {}
+
+    .book-spec-label {
+        font-family: var(--ff-mono);
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--muted);
+        display: block;
+        margin-bottom: 0.2rem;
+    }
+
+    .book-spec-value {
+        font-family: var(--ff-display);
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--ink);
+    }
+
+    .book-price-large {
+        font-family: var(--ff-display);
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: var(--ink);
+        margin-bottom: 1.5rem;
+    }
+
+    .book-price-large::before {
+        content: '$';
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: var(--muted);
+        vertical-align: top;
+        margin-top: 0.6rem;
+        display: inline-block;
+    }
+
+    .purchase-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .admin-bar {
+        margin-top: 3rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 1rem;
+    }
+
+    .back-link {
+        font-family: var(--ff-mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+        transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--rust); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="book-detail">
+    <!-- Cover -->
+    <div class="book-cover-wrap">
+        <div class="book-cover-large">
+            <div class="cover-spine"></div>
+            {% if book.image %}
+                <img src="/static/{{ book.image }}" alt="{{ book.title }}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                <div class="book-cover-large-placeholder" style="display:none;">{{ book.title }}</div>
+            {% else %}
+                <div class="book-cover-large-placeholder">{{ book.title }}</div>
+            {% endif %}
+        </div>
+        <a href="/books" class="back-link">← Back to catalogue</a>
+    </div>
+
+    <!-- Info -->
+    <div class="book-info">
+        <div class="breadcrumb">
+            <a href="/">Home</a> / <a href="/books">Catalogue</a> / <span>{{ book.title }}</span>
+        </div>
+
+        <p class="book-author-tag">{{ book.author }}</p>
+        <h1 class="book-title">{{ book.title }}</h1>
+
+        <div class="book-divider"></div>
+
+        <p class="book-description">{{ book.description }}</p>
+
+        <div class="book-specs">
+            <div class="book-spec-item">
+                <span class="book-spec-label">Author</span>
+                <span class="book-spec-value">{{ book.author }}</span>
+            </div>
+            <div class="book-spec-item">
+                <span class="book-spec-label">Format</span>
+                <span class="book-spec-value">Hardcover</span>
+            </div>
+            <div class="book-spec-item">
+                <span class="book-spec-label">Genre</span>
+                <span class="book-spec-value">Fiction</span>
+            </div>
+            <div class="book-spec-item">
+                <span class="book-spec-label">Availability</span>
+                <span class="book-spec-value" style="color:var(--sage);">In Stock</span>
+            </div>
+        </div>
+
+        <div class="book-price-large">{{ book.price }}</div>
+
+        <div class="purchase-actions">
+            <a href="/payment" class="btn btn-gold" style="padding:0.9rem 2.5rem;font-size:0.82rem;">Purchase Now</a>
+            <a href="/books" class="btn btn-outline" style="padding:0.9rem 2rem;font-size:0.82rem;">Continue Browsing</a>
+        </div>
+
+        {% if current_user.is_authenticated and current_user.role == 'admin' %}
+        <div class="admin-bar">
+            <a href="/edit_book/{{ book.id }}" class="btn btn-outline" style="font-size:0.75rem;padding:0.6rem 1.5rem;">Edit Book</a>
+            <a href="/delete_book/{{ book.id }}" class="btn" style="font-size:0.75rem;padding:0.6rem 1.5rem;background:transparent;border:1.5px solid var(--rust);color:var(--rust);" onclick="return confirm('Delete this book?')">Delete Book</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

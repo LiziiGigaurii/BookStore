@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+{% block title %}Register — Folio{% endblock %}
+
+{% block extra_style %}
+<style>
+    .auth-layout {
+        min-height: calc(100vh - 64px);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .auth-visual {
+        background: var(--ink);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .auth-visual::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(184,134,11,0.05) 60px, rgba(184,134,11,0.05) 61px),
+            repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(184,134,11,0.05) 60px, rgba(184,134,11,0.05) 61px);
+    }
+
+    .auth-visual-content { position: relative; text-align: center; }
+
+    .auth-visual-quote {
+        font-family: var(--ff-display);
+        font-size: 5rem;
+        color: var(--gold);
+        opacity: 0.15;
+        line-height: 1;
+        margin-bottom: -1rem;
+    }
+
+    .auth-visual h2 {
+        font-family: var(--ff-display);
+        font-size: clamp(1.8rem, 3vw, 2.5rem);
+        font-style: italic;
+        color: var(--parchment);
+        line-height: 1.3;
+        margin-bottom: 1.5rem;
+    }
+
+    .auth-visual p {
+        font-style: italic;
+        color: var(--muted);
+        font-size: 0.9rem;
+        max-width: 320px;
+        line-height: 1.8;
+    }
+
+    .auth-visual-line {
+        width: 40px;
+        height: 2px;
+        background: var(--gold);
+        margin: 1.5rem auto;
+    }
+
+    .auth-form-side {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 4rem;
+        background: var(--cream);
+    }
+
+    .auth-eyebrow {
+        font-family: var(--ff-mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 0.75rem;
+    }
+
+    .auth-form-side h1 {
+        font-family: var(--ff-display);
+        font-size: 2.2rem;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.4rem;
+    }
+
+    .auth-sub {
+        font-style: italic;
+        color: var(--muted);
+        margin-bottom: 2.5rem;
+        font-size: 0.9rem;
+    }
+
+    .auth-sub a {
+        color: var(--gold);
+        text-decoration: none;
+        font-style: normal;
+        font-family: var(--ff-mono);
+        font-size: 0.78rem;
+        letter-spacing: 0.05em;
+    }
+
+    .auth-sub a:hover { color: var(--rust); }
+
+    .submit-btn {
+        width: 100%;
+        padding: 1rem;
+        background: var(--ink);
+        color: var(--parchment);
+        font-family: var(--ff-mono);
+        font-size: 0.8rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        border: none;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 0.5rem;
+        border-radius: 1px;
+    }
+
+    .submit-btn:hover { background: var(--rust); }
+
+    /* --- EYE CURSOR STYLES --- */
+    .auth-form-side {
+        cursor: none;
+    }
+
+    .auth-form-side input,
+    .auth-form-side button,
+    .auth-form-side a {
+        cursor: none;
+    }
+
+    .eye-cursor {
+        position: fixed;
+        width: 26px;
+        height: 16px;
+        background: var(--cream);
+        border: 2px solid var(--ink);
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.04s linear, height 0.12s ease, background 0.12s ease;
+        z-index: 10000;
+    }
+
+    .pupil {
+        width: 8px;
+        height: 8px;
+        background: var(--ink);
+        border-radius: 50%;
+        transition: opacity 0.1s ease;
+    }
+
+    .eye-cursor.closed {
+        height: 2px;
+        background: var(--ink);
+    }
+
+    .eye-cursor.closed .pupil {
+        opacity: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- The Custom Eye Cursor Container -->
+<div id="eye-cursor" class="eye-cursor">
+    <div class="pupil"></div>
+</div>
+
+<div class="auth-layout">
+    <!-- Visual -->
+    <div class="auth-visual">
+        <div class="auth-visual-content">
+            <div class="auth-visual-quote">"</div>
+            <h2>Join the community of readers.</h2>
+            <div class="auth-visual-line"></div>
+            <p>Create your account to save favourites, publish your own works, and connect with fellow book lovers.</p>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="auth-form-side">
+        <p class="auth-eyebrow">Create Account</p>
+        <h1>Register</h1>
+        <p class="auth-sub">Already have an account? <a href="/login">Sign in →</a></p>
+
+        <form action="{{ url_for('main.register') }}" method="POST" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ form.username.label }}
+                {{ form.username(placeholder="Choose a username") }}
+                {% if form.username.errors %}
+                    {% for error in form.username.errors %}<p class="form-errors">{{ error }}</p>{% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.password.label }}
+                {{ form.password(placeholder="Min. 8 characters") }}
+                {% if form.password.errors %}
+                    {% for error in form.password.errors %}<p class="form-errors">{{ error }}</p>{% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.repeat_password.label }}
+                {{ form.repeat_password(placeholder="Repeat your password") }}
+                {% if form.repeat_password.errors %}
+                    {% for error in form.repeat_password.errors %}<p class="form-errors">{{ error }}</p>{% endfor %}
+                {% endif %}
+            </div>
+
+            <button type="submit" class="submit-btn">Create Account</button>
+        </form>
+    </div>
+</div>
+
+<!-- Scripts nested safely within the content block -->
+<script>
+    const eyeCursor = document.getElementById('eye-cursor');
+    const formSide = document.querySelector('.auth-form-side');
+    const passwordFields = document.querySelectorAll('input[type="password"]');
+
+    formSide.addEventListener('mouseenter', () => {
+        eyeCursor.style.display = 'flex';
+    });
+
+    formSide.addEventListener('mouseleave', () => {
+        eyeCursor.style.display = 'none';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (eyeCursor.style.display === 'none') return;
+
+        eyeCursor.style.left = `${e.clientX}px`;
+        eyeCursor.style.top = `${e.clientY}px`;
+
+        let shouldClose = false;
+        const closingDistance = 120;
+
+        passwordFields.forEach(field => {
+            const rect = field.getBoundingClientRect();
+            const fieldCenterX = rect.left + rect.width / 2;
+            const fieldCenterY = rect.top + rect.height / 2;
+            const distance = Math.hypot(e.clientX - fieldCenterX, e.clientY - fieldCenterY);
+
+            if (distance < closingDistance) {
+                shouldClose = true;
+            }
+        });
+
+        if (shouldClose) {
+            eyeCursor.classList.add('closed');
+        } else {
+            eyeCursor.classList.remove('closed');
+        }
+    });
+</script>
+
+{% endblock %}

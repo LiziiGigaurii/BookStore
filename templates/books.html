@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+{% block title %}Catalogue — Folio{% endblock %}
+
+{% block extra_style %}
+<style>
+    .catalogue-layout {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 4rem 3rem;
+    }
+
+    .catalogue-header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 3rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .catalogue-header h2 {
+        font-family: var(--ff-display);
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .catalogue-count {
+        font-family: var(--ff-mono);
+        font-size: 0.75rem;
+        color: var(--muted);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .books-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 3rem 2.5rem;
+    }
+
+    .book-card {
+        display: flex;
+        flex-direction: column;
+        text-decoration: none;
+        color: inherit;
+        opacity: 0;
+        animation: fadeUp 0.5s ease forwards;
+    }
+
+    {% for i in range(12) %}
+    .book-card:nth-child({{ i + 1 }}) { animation-delay: {{ i * 0.07 }}s; }
+    {% endfor %}
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .book-cover {
+        aspect-ratio: 3/4;
+        background: var(--parchment);
+        overflow: hidden;
+        border: 1px solid var(--border);
+        position: relative;
+        margin-bottom: 1.2rem;
+    }
+
+    .book-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+
+    .book-card:hover .book-cover img { transform: scale(1.05); }
+
+    .book-cover-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(155deg, var(--parchment) 0%, #e0d8c8 100%);
+        padding: 2rem;
+        transition: transform 0.4s ease;
+    }
+
+    .book-card:hover .book-cover-placeholder { transform: scale(1.03); }
+
+    .book-cover-spine {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 10px;
+        background: var(--gold);
+        opacity: 0.5;
+    }
+
+    .book-meta-author {
+        font-family: var(--ff-mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 0.25rem;
+    }
+
+    .book-meta-title {
+        font-family: var(--ff-display);
+        font-size: 1.1rem;
+        font-weight: 700;
+        line-height: 1.25;
+        margin-bottom: 0.5rem;
+        transition: color 0.2s;
+    }
+
+    .book-card:hover .book-meta-title { color: var(--rust); }
+
+    .book-meta-desc {
+        font-size: 0.82rem;
+        color: var(--muted);
+        line-height: 1.6;
+        font-style: italic;
+        flex: 1;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .book-meta-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-top: 1px solid var(--border);
+        padding-top: 0.75rem;
+        margin-top: auto;
+    }
+
+    .book-price {
+        font-family: var(--ff-mono);
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: var(--ink);
+    }
+
+    .book-view-link {
+        font-family: var(--ff-mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--gold);
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .book-view-link:hover { color: var(--rust); }
+
+    .admin-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+    }
+
+    .admin-btn {
+        font-family: var(--ff-mono);
+        font-size: 0.65rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 0.35rem 0.75rem;
+        border-radius: 1px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-edit {
+        background: transparent;
+        border: 1px solid var(--ink);
+        color: var(--ink);
+    }
+
+    .btn-edit:hover { background: var(--ink); color: var(--parchment); }
+
+    .btn-delete {
+        background: transparent;
+        border: 1px solid var(--rust);
+        color: var(--rust);
+    }
+
+    .btn-delete:hover { background: var(--rust); color: white; }
+
+    .empty-state {
+        grid-column: 1/-1;
+        text-align: center;
+        padding: 6rem 2rem;
+        color: var(--muted);
+    }
+
+    .empty-state h3 {
+        font-family: var(--ff-display);
+        font-size: 2rem;
+        font-style: italic;
+        margin-bottom: 1rem;
+        color: var(--border);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>The Catalogue</h1>
+    <p>Every book worth reading, in one place.</p>
+</div>
+
+<div class="catalogue-layout">
+    <div class="catalogue-header">
+        <h2>All Titles</h2>
+        <span class="catalogue-count">{{ books|length }} book{% if books|length != 1 %}s{% endif %} available</span>
+    </div>
+
+    <div class="books-grid">
+        {% if books %}
+            {% for book in books %}
+            <div class="book-card">
+                <a href="/view_book/{{ book.id }}" style="text-decoration:none;color:inherit;">
+                    <div class="book-cover">
+                        <div class="book-cover-spine"></div>
+                        {% if book.image %}
+                            <img src="/static/{{ book.image }}" alt="{{ book.title }}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                            <div class="book-cover-placeholder" style="display:none;">
+                                <span style="font-family:var(--ff-display);font-style:italic;font-size:0.9rem;color:var(--muted);text-align:center;">{{ book.title }}</span>
+                            </div>
+                        {% else %}
+                            <div class="book-cover-placeholder">
+                                <span style="font-family:var(--ff-display);font-style:italic;font-size:0.9rem;color:var(--muted);text-align:center;">{{ book.title }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <p class="book-meta-author">{{ book.author }}</p>
+                    <h3 class="book-meta-title">{{ book.title }}</h3>
+                    <p class="book-meta-desc">{{ book.description }}</p>
+
+                    <div class="book-meta-footer">
+                        <span class="book-price">${{ book.price }}</span>
+                        <span class="book-view-link">View →</span>
+                    </div>
+                </a>
+
+                {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                <div class="admin-actions">
+                    <a href="/edit_book/{{ book.id }}" class="admin-btn btn-edit">Edit</a>
+                    <a href="/delete_book/{{ book.id }}" class="admin-btn btn-delete" onclick="return confirm('Delete this book?')">Delete</a>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <h3>No books yet.</h3>
+                <p>The shelves are waiting to be filled.</p>
+                {% if current_user.is_authenticated %}
+                <br><a href="/publish_yours" class="btn btn-gold" style="margin-top:1rem;">Publish the First</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+{% block title %}Payment — Folio{% endblock %}
+
+{% block extra_style %}
+<style>
+    .payment-layout {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 5rem 3rem;
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 3rem;
+        align-items: start;
+    }
+
+    .payment-form-section h2 {
+        font-family: var(--ff-display);
+        font-size: 1.8rem;
+        font-weight: 900;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .payment-block {
+        margin-bottom: 2.5rem;
+    }
+
+    .payment-block-title {
+        font-family: var(--ff-mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .payment-block-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+    }
+
+    .card-field-group {
+        display: grid;
+        grid-template-columns: 1fr 100px 80px;
+        gap: 1rem;
+    }
+
+    .card-icons {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .card-icon {
+        padding: 0.3rem 0.6rem;
+        border: 1px solid var(--border);
+        border-radius: 2px;
+        font-family: var(--ff-mono);
+        font-size: 0.65rem;
+        letter-spacing: 0.05em;
+        color: var(--muted);
+        background: white;
+    }
+
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .submit-payment {
+        width: 100%;
+        padding: 1.1rem;
+        background: var(--gold);
+        color: var(--ink);
+        font-family: var(--ff-mono);
+        font-size: 0.82rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        border: none;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 1rem;
+        border-radius: 1px;
+        font-weight: 600;
+    }
+
+    .submit-payment:hover { background: var(--gold-light); }
+
+    /* Order summary */
+    .order-summary {
+        position: sticky;
+        top: 90px;
+        background: var(--parchment);
+        border: 1px solid var(--border);
+        padding: 2rem;
+    }
+
+    .order-summary h3 {
+        font-family: var(--ff-display);
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px dashed var(--border);
+        font-size: 0.88rem;
+    }
+
+    .order-item-name {
+        font-style: italic;
+        color: var(--ink);
+    }
+
+    .order-item-price {
+        font-family: var(--ff-mono);
+        font-size: 0.82rem;
+        color: var(--muted);
+    }
+
+    .order-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1.25rem;
+        margin-top: 0.5rem;
+    }
+
+    .order-total-label {
+        font-family: var(--ff-mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--muted);
+    }
+
+    .order-total-price {
+        font-family: var(--ff-display);
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: var(--ink);
+    }
+
+    .security-note {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border);
+        font-family: var(--ff-mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>Secure Checkout</h1>
+    <p>Your order is just a few steps away.</p>
+</div>
+
+<div class="payment-layout">
+    <!-- Form -->
+    <div class="payment-form-section">
+        <h2>Payment Details</h2>
+
+        <form method="POST" novalidate>
+
+            <!-- Contact -->
+            <div class="payment-block">
+                <p class="payment-block-title">Contact Information</p>
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" name="first_name" placeholder="John">
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" name="last_name" placeholder="Doe">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" placeholder="you@example.com">
+                </div>
+            </div>
+
+            <!-- Shipping -->
+            <div class="payment-block">
+                <p class="payment-block-title">Shipping Address</p>
+                <div class="form-group">
+                    <label>Street Address</label>
+                    <input type="text" name="address" placeholder="123 Book Lane">
+                </div>
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" name="city" placeholder="New York">
+                    </div>
+                    <div class="form-group">
+                        <label>Postal Code</label>
+                        <input type="text" name="postal" placeholder="10001">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Country</label>
+                    <input type="text" name="country" placeholder="United States">
+                </div>
+            </div>
+
+            <!-- Card -->
+            <div class="payment-block">
+                <p class="payment-block-title">Card Details</p>
+                <div class="card-icons">
+                    <span class="card-icon">VISA</span>
+                    <span class="card-icon">MC</span>
+                    <span class="card-icon">AMEX</span>
+                    <span class="card-icon">PAYPAL</span>
+                </div>
+                <div class="form-group">
+                    <label>Card Number</label>
+                    <input type="text" name="card_number" placeholder="1234 5678 9012 3456" maxlength="19">
+                </div>
+                <div class="card-field-group">
+                    <div class="form-group">
+                        <label>Cardholder Name</label>
+                        <input type="text" name="card_name" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label>Expiry</label>
+                        <input type="text" name="expiry" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    <div class="form-group">
+                        <label>CVV</label>
+                        <input type="text" name="cvv" placeholder="123" maxlength="4">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-payment">Complete Purchase →</button>
+
+        </form>
+    </div>
+
+    <!-- Summary -->
+    <div class="order-summary">
+        <h3>Order Summary</h3>
+
+        <div class="order-item">
+            <span class="order-item-name">It Ends With Us</span>
+            <span class="order-item-price">$25.00</span>
+        </div>
+        <div class="order-item">
+            <span class="order-item-name">Standard Shipping</span>
+            <span class="order-item-price">$4.99</span>
+        </div>
+
+        <div class="order-total">
+            <span class="order-total-label">Total</span>
+            <span class="order-total-price">$29.99</span>
+        </div>
+
+        <div class="security-note">
+            🔒 Secured with SSL encryption
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,88 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --ink: #1a1209;
+        --parchment: #f5f0e8;
+        --gold: #b8860b;
+        --gold-light: #d4a017;
+        --border: #d4c9b0;
+        --muted: #7a6e5e;
+        --ff-display: 'Playfair Display', Georgia, serif;
+        --ff-mono: 'DM Mono', monospace;
+    }
+
+    nav {
+        background: var(--ink);
+        padding: 0 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 64px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        border-bottom: 2px solid var(--gold);
+    }
+
+    .nav-logo {
+        font-family: var(--ff-display);
+        font-size: 1.6rem;
+        font-weight: 900;
+        color: var(--parchment);
+        text-decoration: none;
+        letter-spacing: -0.02em;
+    }
+
+    .nav-logo span { color: var(--gold-light); font-style: italic; }
+
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .nav-links a {
+        font-family: var(--ff-mono);
+        font-size: 0.75rem;
+        font-weight: 300;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--border);
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--gold-light); }
+
+    .nav-links .btn-nav {
+        background: var(--gold);
+        color: var(--ink) !important;
+        padding: 0.45rem 1.2rem;
+        border-radius: 1px;
+        transition: background 0.2s !important;
+    }
+
+    .nav-links .btn-nav:hover { background: var(--gold-light) !important; }
+</style>
+
+<nav>
+    <a href="/" class="nav-logo">Fo<span>lio</span></a>
+    <ul class="nav-links">
+        <li><a href="/books">Catalogue</a></li>
+        <li><a href="/about_us">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+        {% if current_user.is_authenticated %}
+            <li><a href="/publish_yours">Publish</a></li>
+            <li><a href="/logout">Log out</a></li>
+        {% else %}
+            <li><a href="/login">Sign In</a></li>
+            <li><a href="/register" class="btn-nav">Register</a></li>
+        {% endif %}
+    </ul>
+</nav>
