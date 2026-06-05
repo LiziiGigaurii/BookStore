@@ -3,5 +3,4 @@ Flask-SQLAlchemy
 Flask-WTF
 Flask-Login
 gunicorn
-psycopg2-binary
 Flask-Mail
