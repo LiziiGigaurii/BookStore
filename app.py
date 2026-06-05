@@ -16,8 +16,9 @@ if database_url and database_url.startswith("postgres://"):
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'super-secret-random-key-here')
 app.config['MAIL_SERVER'] = 'smtp-relay.brevo.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_PORT'] = 465             
+app.config['MAIL_USE_TLS'] = False               
+app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = 'adbcb5001@smtp-brevo.com'
 app.config['MAIL_PASSWORD'] = 'bsk4Zq7odOpHkwQ'
 
