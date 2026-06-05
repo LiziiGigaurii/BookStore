@@ -1,4 +1,3 @@
-# models.py
 from extensions import db, login_manager
 from random import randint
 
@@ -21,7 +20,6 @@ class BaseModel:
 
 class User(db.Model, BaseModel, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    # Added unique=True to prevent duplicate usernames in the database backend
     username = db.Column(db.String, unique=True)
     password = db.Column(db.String)
     role = db.Column(db.String)
@@ -55,7 +53,6 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
 
-        # 1. Safeguard: Only add books if the Book table is empty
         if not Book.query.first():
             print("Seeding books into the database...")
             books = [
@@ -118,7 +115,6 @@ if __name__ == "__main__":
         else:
             print("Books already exist in the database. Skipping book seed.")
 
-        # 2. Safeguard: Only add the admin if they don't exist yet
         if not User.query.filter_by(username="admin_user").first():
             print("Creating admin user...")
             admin_user = User(username="admin_user", password="lizi", role="admin")

@@ -3,11 +3,10 @@ from flask_login import login_user, logout_user, login_required, current_user
 from os import path
 
 from forms import AddBookForm, RegisterForm, LoginForm, EditBookForm, ContactUsForm
-from extensions import app, db, mail # Note: You might not even need to import 'app' here anymore!
+from extensions import db, mail
 from flask_mail import Message
 from models import Book, User
 
-# Define the blueprint at the top so all routes below can use it
 main_bp = Blueprint('main', __name__)
 
 

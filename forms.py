@@ -12,7 +12,6 @@ class AddBookForm(FlaskForm):
     price = StringField("book price", validators=[DataRequired()])
     author = StringField("book author", validators=[DataRequired()])
 
-
     submit = SubmitField("Add book")
 
 
@@ -23,9 +22,7 @@ class EditBookForm(FlaskForm):
     price = StringField("book price", validators=[DataRequired()])
     author = StringField("book author", validators=[DataRequired()])
 
-
     submit = SubmitField("Add book")
-
 
 
 class ContactUsForm(FlaskForm):
