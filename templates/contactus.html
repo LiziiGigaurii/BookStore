@@ -148,6 +148,30 @@
         background: var(--ink);
         border-radius: 50%;
     }
+
+    /* input-ების ლამაზი ჩარჩოები Folio სტილში */
+    .form-group input, .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--ink);
+        background: transparent;
+        font-family: inherit;
+        color: var(--ink);
+        margin-top: 0.4rem;
+    }
+    
+    .form-group label {
+        display: block;
+        font-family: var(--ff-mono);
+        font-size: 0.8rem;
+        color: var(--ink);
+    }
+
+    .form-errors {
+        color: var(--rust);
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+    }
 </style>
 {% endblock %}
 
@@ -178,7 +202,8 @@
         <form action="{{ url_for('main.contact') }}" method="POST" novalidate>
             {{ form.hidden_tag() }}
 
-            <div class="form-group">
+            <!-- სახელი -->
+            <div class="form-group" style="margin-bottom: 1.2rem;">
                 {{ form.name.label }}
                 {{ form.name(placeholder="Your full name") }}
                 {% if form.name.errors %}
@@ -186,7 +211,8 @@
                 {% endif %}
             </div>
 
-            <div class="form-group">
+            <!-- იმეილი -->
+            <div class="form-group" style="margin-bottom: 1.2rem;">
                 {{ form.email.label }}
                 {{ form.email(placeholder="Your email address") }}
                 {% if form.email.errors %}
@@ -194,16 +220,34 @@
                 {% endif %}
             </div>
 
-            {% if form.message %}
-            <div class="form-group">
-                {{ form.message.label }}
-                {{ form.message(placeholder="Write your message here...", rows="5") }}
-                {% if form.message.errors %}
-                    {% for error in form.message.errors %}<p class="form-errors">{{ error }}</p>{% endfor %}
+            <!-- თემა -->
+            <div class="form-group" style="margin-bottom: 1.2rem;">
+                {{ form.subject.label }}
+                {{ form.subject(placeholder="What is this about?") }}
+                {% if form.subject.errors %}
+                    {% for error in form.subject.errors %}<p class="form-errors">{{ error }}</p>{% endfor %}
                 {% endif %}
             </div>
-            {% endif %}
 
+            <!-- ტელეფონი -->
+            <div class="form-group" style="margin-bottom: 1.2rem;">
+                {{ form.telephone.label }}
+                {{ form.telephone(placeholder="Your phone number") }}
+                {% if form.telephone.errors %}
+                    {% for error in form.telephone.errors %}<p class="form-errors">{{ error }}</p>{% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- მესიჯის დიდი ჩარჩო (yourmessage) -->
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                {{ form.yourmessage.label }}
+                {{ form.yourmessage(placeholder="Write your question here...", rows="4", style="resize: vertical;") }}
+                {% if form.yourmessage.errors %}
+                    {% for error in form.yourmessage.errors %}<p class="form-errors">{{ error }}</p>{% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- გაგზავნის ღილაკი -->
             <button type="submit" class="submit-btn">Send Message</button>
         </form>
     </div>
