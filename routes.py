@@ -1,9 +1,8 @@
-from flask import Flask, render_template, redirect, flash, Blueprint, current_app
+from flask import render_template, redirect, flash, Blueprint, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from os import path
-import requests
 from forms import AddBookForm, RegisterForm, LoginForm, EditBookForm, ContactUsForm
-from extensions import db, mail
+from extensions import mail
 from flask_mail import Message
 from models import Book, User
 
@@ -22,13 +21,13 @@ def payment():
 
 @main_bp.route("/books")
 def booklist():
-    books = Book.query.all()
+    books = Book.all()
     return render_template("books.html", books=books)
 
 
 @main_bp.route("/view_book/<int:book_id>")
 def viewbook(book_id):
-    book = Book.query.get(book_id)
+    book = Book.get(book_id)
     if not book:
         return render_template("404.html")
     return render_template("view_book.html", book=book)
@@ -60,7 +59,7 @@ def edit_book(book_id):
     if current_user.role != "admin":
         return redirect("/")
 
-    book = Book.query.get(book_id)
+    book = Book.get(book_id)
     if not book:
         return render_template("404.html")
 
@@ -77,7 +76,7 @@ def edit_book(book_id):
         book.price = form.price.data
         book.author = form.author.data
 
-        db.session.commit()
+        book.save()
 
         return redirect("/books")
 
@@ -90,7 +89,7 @@ def delete_book(book_id):
     if current_user.role != "admin":
         return redirect("/")
 
-    book = Book.query.get(book_id)
+    book = Book.get(book_id)
     if not book:
         return render_template("404.html")
 
@@ -105,7 +104,7 @@ def register():
     form = RegisterForm()
 
     if form.validate_on_submit():
-        existing_user = User.query.filter(User.username == form.username.data).first()
+        existing_user = User.get_by_username(form.username.data)
         if existing_user:
             flash("Username already in use!")
         else:
@@ -122,7 +121,7 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        user = User.query.filter(User.username == form.username.data).first()
+        user = User.get_by_username(form.username.data)
         if user and user.check_password(form.password.data):
             login_user(user)
             flash("You successfully logged in!")
