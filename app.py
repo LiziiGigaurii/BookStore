@@ -3,14 +3,13 @@ import socket
 
 from flask import Flask
 
-from extensions import mail, login_manager, set_database_path
-from routes import main_bp
+from extensions import login_manager, set_database_path
+from routes import app as app_routes
 
 socket.setdefaulttimeout(5)
 
 app = Flask(__name__)
 
-# DATABASE_URL may be a path or a sqlite:/// URL; normalize down to a file path.
 database_url = os.environ.get('DATABASE_URL', 'database.db')
 if database_url.startswith("sqlite:///"):
     database_url = database_url[len("sqlite:///"):]
@@ -18,19 +17,12 @@ if database_url.startswith("sqlite:///"):
 set_database_path(database_url)
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'super-secret-random-key-here')
-app.config['MAIL_SERVER'] = 'smtp-relay.brevo.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = 'adbcb5001@smtp-brevo.com'
-app.config['MAIL_PASSWORD'] = 'bsk4Zq7odOpHkwQ'
 
-mail.init_app(app)
 login_manager.init_app(app)
 
 login_manager.login_view = "main.login"
 
-app.register_blueprint(main_bp)
+app.register_blueprint(app_routes)
 
 # Import after set_database_path so models.get_db() uses the right file.
 from models import Book, User, init_db
@@ -47,7 +39,7 @@ with app.app_context():
              "description": "a surprising and captivating story about friendship, love, and self-discovery set on Nantucket.",
              "price": "30", "author": "Elin Hilderbrand"},
             {"image": "view.jpg", "title": "You With A View",
-             "description": "Romances of JulyTwo high school enemies must reunite for a road trip inspired by their grandparents’ broken engagement",
+             "description": "Romances of JulyTwo high school enemies must reunite for a road trip inspired by their grandparents' broken engagement",
              "price": "20", "author": "Jessica Joyce"},
             {"image": "crown.jpg", "title": "Ghosted",
              "description": "waited for a phone call that didn't come. Imagine you meet a man, spend six glorious days together, and fall in love",
@@ -64,7 +56,7 @@ with app.app_context():
                  price=book["price"], author=book["author"]).create()
 
     if not User.get_by_username("admin_user"):
-        User(username="admin_user", password="lizi", role="admin").create()
+        User(username="admin_user", password="lizidora", role="admin").create()
 
 if __name__ == "__main__":
     app.run(debug=True)

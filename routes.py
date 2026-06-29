@@ -2,30 +2,28 @@ from flask import render_template, redirect, flash, Blueprint, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from os import path
 from forms import AddBookForm, RegisterForm, LoginForm, EditBookForm, ContactUsForm
-from extensions import mail
-from flask_mail import Message
 from models import Book, User
 
-main_bp = Blueprint('main', __name__)
+app = Blueprint('main', __name__)
 
 
-@main_bp.route("/")
+@app.route("/")
 def home():
     return render_template("index.html")
 
 
-@main_bp.route("/payment")
+@app.route("/payment")
 def payment():
     return render_template("payment.html")
 
 
-@main_bp.route("/books")
+@app.route("/books")
 def booklist():
     books = Book.all()
     return render_template("books.html", books=books)
 
 
-@main_bp.route("/view_book/<int:book_id>")
+@app.route("/view_book/<int:book_id>")
 def viewbook(book_id):
     book = Book.get(book_id)
     if not book:
@@ -33,7 +31,7 @@ def viewbook(book_id):
     return render_template("view_book.html", book=book)
 
 
-@main_bp.route("/publish_yours", methods=["GET", "POST"])
+@app.route("/publish_yours", methods=["GET", "POST"])
 @login_required
 def publish():
     form = AddBookForm()
@@ -43,8 +41,8 @@ def publish():
         filename = file.filename
         file.save((path.join(current_app.root_path, 'static', filename)))
 
-        new_book = Book(image=filename, title=form.title.data, description=form.description.data, price=form.price.data,
-                        author=form.author.data )
+        new_book = Book(image=filename, title=form.title.data, description=form.description.data,
+                        price=form.price.data, author=form.author.data)
         new_book.create()
 
         flash("Your book has been added successfully!")
@@ -53,7 +51,7 @@ def publish():
     return render_template("publishpage.html", form=form)
 
 
-@main_bp.route("/edit_book/<int:book_id>", methods=["GET", "POST"])
+@app.route("/edit_book/<int:book_id>", methods=["GET", "POST"])
 @login_required
 def edit_book(book_id):
     if current_user.role != "admin":
@@ -83,7 +81,7 @@ def edit_book(book_id):
     return render_template("publishpage.html", form=form)
 
 
-@main_bp.route("/delete_book/<int:book_id>")
+@app.route("/delete_book/<int:book_id>")
 @login_required
 def delete_book(book_id):
     if current_user.role != "admin":
@@ -99,7 +97,7 @@ def delete_book(book_id):
     return redirect("/books")
 
 
-@main_bp.route("/register", methods=["GET", "POST"])
+@app.route("/register", methods=["GET", "POST"])
 def register():
     form = RegisterForm()
 
@@ -116,7 +114,7 @@ def register():
     return render_template("register.html", form=form)
 
 
-@main_bp.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
 
@@ -132,53 +130,24 @@ def login():
     return render_template("login.html", form=form)
 
 
-@main_bp.route("/logout")
+@app.route("/logout")
 def logout():
     logout_user()
     flash("You successfully logged out of your account!")
     return redirect("/")
 
 
-@main_bp.route("/about_us")
+@app.route("/about_us")
 def aboutus():
     return render_template("aboutus.html")
 
 
-@main_bp.route("/contact", methods=["GET", "POST"])
+@app.route("/contact", methods=["GET", "POST"])
 def contact():
     form = ContactUsForm()
 
     if form.validate_on_submit():
-        print(f"name: {form.name.data}")
-        print(f"email: {form.email.data}")
-
-        msg = Message(
-            subject=f"Folio Contact: {form.subject.data}",
-            sender=current_app.config['MAIL_USERNAME'],
-            recipients=['gigaurilizi1238@gmail.com']
-        )
-
-        msg.body = f"""
-        You received a new message from your website contact form!
-
-        Name: {form.name.data}
-        Email: {form.email.data}
-        Phone: {form.telephone.data if form.telephone.data else 'Not provided'}
-
-        Message:
-        {form.yourmessage.data}
-        """
-
-        try:
-            mail.send(msg)
-            flash("Your Message Was Successfully sent")
-        except Exception as e:
-            print(f"Mail delivery failed: {str(e)}")
-            flash("System error: Could not send email at this time.")
-
+        flash("Your message has been received!")
         return redirect("/")
-
-    if form.errors:
-        print(form.errors)
 
     return render_template("contactus.html", form=form)
