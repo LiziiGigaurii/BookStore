@@ -66,7 +66,7 @@ def edit_book(book_id):
         file = form.image.data
         if file:
             filename = file.filename
-            file.save((path.join(current_app.root_path, 'static/img', filename)))
+            file.save((path.join(current_app.root_path, 'static', filename)))
             book.image = filename
 
         book.title = form.title.data

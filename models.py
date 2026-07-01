@@ -198,7 +198,7 @@ if __name__ == "__main__":
 
     if not User.get_by_username("admin_user"):
         print("Creating admin user...")
-        User(username="admin_user", password="lizi", role="admin").create()
+        User(username="admin_user", password="lizidora", role="admin").create()
         print("Admin user created successfully!")
     else:
         print("Admin user already exists. Skipping admin creation.")
